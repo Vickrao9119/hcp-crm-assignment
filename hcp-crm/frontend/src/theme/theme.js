@@ -1,3 +1,4 @@
+git branch -M main
 import { createTheme } from '@mui/material/styles';
 import { palette, fonts } from './palette';
 
