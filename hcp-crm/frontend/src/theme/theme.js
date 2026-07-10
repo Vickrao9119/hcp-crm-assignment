@@ -1,27 +1,30 @@
-git branch -M main
-import { createTheme } from '@mui/material/styles';
-import { palette, fonts } from './palette';
+import { createTheme } from "@mui/material/styles";
+import { palette, fonts } from "./palette";
 
 /**
  * Builds an MUI theme for either 'light' or 'dark' mode using our design tokens.
  */
-export const buildTheme = (mode = 'light') =>
+export const buildTheme = (mode = "light") =>
   createTheme({
     palette: {
       mode,
-      primary: { main: palette.primary, dark: palette.primaryDark, light: palette.primaryLight },
+      primary: {
+        main: palette.primary,
+        dark: palette.primaryDark,
+        light: palette.primaryLight,
+      },
       secondary: { main: palette.accent },
       warning: { main: palette.warning },
       error: { main: palette.danger },
       background: {
-        default: mode === 'light' ? palette.bgLight : palette.bgDark,
-        paper: mode === 'light' ? palette.bgLightAlt : palette.bgDarkAlt,
+        default: mode === "light" ? palette.bgLight : palette.bgDark,
+        paper: mode === "light" ? palette.bgLightAlt : palette.bgDarkAlt,
       },
       text: {
-        primary: mode === 'light' ? palette.textDark : '#EAF1F5',
+        primary: mode === "light" ? palette.textDark : "#EAF1F5",
         secondary: palette.textMuted,
       },
-      divider: mode === 'light' ? palette.border : 'rgba(255,255,255,0.08)',
+      divider: mode === "light" ? palette.border : "rgba(255,255,255,0.08)",
     },
     shape: { borderRadius: 14 },
     typography: {
@@ -32,19 +35,20 @@ export const buildTheme = (mode = 'light') =>
       h4: { fontFamily: fonts.display, fontWeight: 600 },
       h5: { fontFamily: fonts.display, fontWeight: 600 },
       h6: { fontFamily: fonts.body, fontWeight: 700 },
-      button: { textTransform: 'none', fontWeight: 600 },
+      button: { textTransform: "none", fontWeight: 600 },
     },
     components: {
       MuiPaper: {
         styleOverrides: {
-          root: { backgroundImage: 'none' },
+          root: { backgroundImage: "none" },
         },
       },
       MuiCard: {
         styleOverrides: {
           root: {
-            border: `1px solid ${mode === 'light' ? palette.border : 'rgba(255,255,255,0.08)'}`,
-            boxShadow: mode === 'light' ? '0 4px 24px rgba(22,75,112,0.06)' : 'none',
+            border: `1px solid ${mode === "light" ? palette.border : "rgba(255,255,255,0.08)"}`,
+            boxShadow:
+              mode === "light" ? "0 4px 24px rgba(22,75,112,0.06)" : "none",
           },
         },
       },
