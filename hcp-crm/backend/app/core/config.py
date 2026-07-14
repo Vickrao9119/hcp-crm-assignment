@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str = ""
     GROQ_MODEL: str = "gemma2-9b-it"
 
-    BACKEND_CORS_ORIGINS: Union[List[str], str] = ["https://hcp-crm-assignment-sandy.vercel.app", "http://localhost:5173", "http://localhost:5174", "http://localhost:3000"]
+    BACKEND_CORS_ORIGINS: Union[List[str], str] = ["https://hcp-crm-assignment-sandy.vercel.app"]
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

@@ -6,10 +6,10 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      '/api': {
-        target: 'http://localhost:8000',
+      "/api": {
+        target: "https://hcp-crm-assignment-3.onrender.com",
         changeOrigin: true,
       },
     },
   },
-})
+});
