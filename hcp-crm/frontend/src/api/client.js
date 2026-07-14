@@ -4,7 +4,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: "https://hcp-crm-assignment-3.onrender.com",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: { "Content-Type": "application/json" },
 });
 
