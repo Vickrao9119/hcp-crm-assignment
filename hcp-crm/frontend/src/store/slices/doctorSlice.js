@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { doctorApi } from '../../api/endpoints';
+import { addAsyncCases } from '../thunkHelpers';
 
 export const fetchDoctors = createAsyncThunk('doctors/fetch', async (params) => {
   const { data } = await doctorApi.list(params);
@@ -11,19 +12,13 @@ const doctorSlice = createSlice({
   initialState: { items: [], total: 0, status: 'idle', error: null },
   reducers: {},
   extraReducers: (builder) => {
-    builder
-      .addCase(fetchDoctors.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(fetchDoctors.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+    addAsyncCases(builder, fetchDoctors, {
+      fulfilled: (state, action) => {
         state.items = action.payload.items;
         state.total = action.payload.total;
-      })
-      .addCase(fetchDoctors.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      });
+      },
+      rejected: (state, action) => { state.error = action.error.message; },
+    });
   },
 });
 

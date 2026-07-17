@@ -1,10 +1,11 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import ChatWindow from '../components/ChatWindow';
+import PageHeader from '../components/PageHeader';
 
 export default function AIChat() {
   return (
     <Box>
-      <Typography variant="h5" sx={{ fontFamily: '"Fraunces", serif', mb: 2 }}>AI Chat</Typography>
+      <PageHeader title="AI Chat" />
       <ChatWindow />
     </Box>
   );

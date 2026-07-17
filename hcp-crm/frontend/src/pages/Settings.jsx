@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Typography, Paper, FormControlLabel, Switch, Divider } from '@mui/material';
 import { toggleTheme } from '../store/slices/themeSlice';
+import PageHeader from '../components/PageHeader';
 
 export default function Settings() {
   const dispatch = useDispatch();
@@ -8,7 +9,7 @@ export default function Settings() {
 
   return (
     <Box>
-      <Typography variant="h5" sx={{ fontFamily: '"Fraunces", serif', mb: 2 }}>Settings</Typography>
+      <PageHeader title="Settings" />
       <Paper sx={{ p: 3, maxWidth: 480 }}>
         <Typography variant="subtitle1" gutterBottom>Appearance</Typography>
         <FormControlLabel

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authApi } from '../../api/endpoints';
+import { addAsyncCases } from '../thunkHelpers';
 
 export const login = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
   try {
@@ -27,20 +28,14 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(login.pending, (state) => {
-        state.status = 'loading';
-        state.error = null;
-      })
-      .addCase(login.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+    addAsyncCases(builder, login, {
+      pending: (state) => { state.error = null; },
+      fulfilled: (state, action) => {
         state.user = action.payload.user;
         state.token = action.payload.access_token;
-      })
-      .addCase(login.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload;
-      });
+      },
+      rejected: (state, action) => { state.error = action.payload; },
+    });
   },
 });
 

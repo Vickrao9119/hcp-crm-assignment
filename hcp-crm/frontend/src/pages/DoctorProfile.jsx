@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { doctorApi, interactionApi } from '../api/endpoints';
 import Loading from '../components/Loading';
 import EmptyState from '../components/EmptyState';
+import PageHeader from '../components/PageHeader';
 
 export default function DoctorProfile() {
   const { id } = useParams();
@@ -26,7 +27,7 @@ export default function DoctorProfile() {
 
   return (
     <Box>
-      <Typography variant="h5" sx={{ fontFamily: '"Fraunces", serif', mb: 2 }}>{doctor.name}</Typography>
+      <PageHeader title={doctor.name} />
       <Grid container spacing={2}>
         <Grid item xs={12} md={4}>
           <Card>

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { chatApi } from '../../api/endpoints';
+import { addAsyncCases } from '../thunkHelpers';
 
 export const sendChatMessage = createAsyncThunk('chat/send', async (payload) => {
   const { data } = await chatApi.send(payload);
@@ -15,12 +16,8 @@ const chatSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(sendChatMessage.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(sendChatMessage.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+    addAsyncCases(builder, sendChatMessage, {
+      fulfilled: (state, action) => {
         state.sessionId = action.payload.session_id;
         state.messages.push({
           role: 'assistant',
@@ -28,11 +25,11 @@ const chatSlice = createSlice({
           entities: action.payload.extracted_entities,
           savedInteraction: action.payload.interaction_saved,
         });
-      })
-      .addCase(sendChatMessage.rejected, (state) => {
-        state.status = 'failed';
+      },
+      rejected: (state) => {
         state.messages.push({ role: 'assistant', text: 'Something went wrong. Please try again.' });
-      });
+      },
+    });
   },
 });
 

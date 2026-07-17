@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Typography, Paper } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import { fetchNotifications } from '../store/slices/notificationSlice';
 import { notificationApi } from '../api/endpoints';
 import NotificationPanel from '../components/NotificationPanel';
+import PageHeader from '../components/PageHeader';
 
 export default function Notifications() {
   const dispatch = useDispatch();
@@ -18,7 +19,7 @@ export default function Notifications() {
 
   return (
     <Box>
-      <Typography variant="h5" sx={{ fontFamily: '"Fraunces", serif', mb: 2 }}>Notifications</Typography>
+      <PageHeader title="Notifications" />
       <Paper sx={{ p: 2 }}>
         <NotificationPanel items={items} onMarkRead={handleMarkRead} />
       </Paper>

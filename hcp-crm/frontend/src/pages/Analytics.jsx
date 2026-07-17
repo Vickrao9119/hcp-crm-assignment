@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { dashboardApi } from '../api/endpoints';
 import AnalyticsCharts from '../components/AnalyticsCharts';
 import Loading from '../components/Loading';
+import PageHeader from '../components/PageHeader';
 
 export default function Analytics() {
   const [data, setData] = useState(null);
@@ -19,7 +20,7 @@ export default function Analytics() {
 
   return (
     <Box>
-      <Typography variant="h5" sx={{ fontFamily: '"Fraunces", serif', mb: 2 }}>Analytics</Typography>
+      <PageHeader title="Analytics" />
       <AnalyticsCharts monthlyChart={monthly} byPriority={data.by_priority} bySpecialization={data.by_specialization} />
     </Box>
   );

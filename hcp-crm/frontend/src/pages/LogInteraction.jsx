@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, Tabs, Tab, Paper } from '@mui/material';
+import { Box, Tabs, Tab, Paper } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDoctors } from '../store/slices/doctorSlice';
 import InteractionForm from '../components/InteractionForm';
 import ChatWindow from '../components/ChatWindow';
+import PageHeader from '../components/PageHeader';
 
 export default function LogInteraction() {
   const dispatch = useDispatch();
@@ -14,7 +15,7 @@ export default function LogInteraction() {
 
   return (
     <Box>
-      <Typography variant="h5" sx={{ fontFamily: '"Fraunces", serif', mb: 2 }}>Log Interaction</Typography>
+      <PageHeader title="Log Interaction" />
       <Paper sx={{ mb: 2 }}>
         <Tabs value={tab} onChange={(_, v) => setTab(v)}>
           <Tab label="Structured Form" />
