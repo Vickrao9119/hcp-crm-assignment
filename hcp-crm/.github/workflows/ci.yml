@@ -16,10 +16,13 @@ jobs:
           python-version: "3.11"
       - name: Install backend dependencies
         working-directory: backend
-        run: pip install -r requirements.txt
+        run: pip install -r requirements-dev.txt
       - name: Compile check
         working-directory: backend
         run: python -m compileall app
+      - name: Run unit tests
+        working-directory: backend
+        run: python -m pytest
 
   frontend:
     runs-on: ubuntu-latest
