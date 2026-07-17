@@ -1,13 +1,14 @@
 """Doctor (HCP) CRUD routes with search, filter, and pagination."""
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from typing import Optional, List
+from typing import Optional
 
 from app.db.database import get_db
 from app.models.doctor import Doctor
 from app.models.user import User
 from app.schemas.doctor import DoctorCreate, DoctorUpdate, DoctorOut
 from app.core.deps import get_current_user
+from app.api.utils import get_or_404, paginate, apply_updates
 
 router = APIRouter(prefix="/api", tags=["doctors"])
 
@@ -30,17 +31,12 @@ def list_doctors(
     if specialization:
         q = q.filter(Doctor.specialization == specialization)
 
-    total = q.count()
-    items = q.offset((page - 1) * page_size).limit(page_size).all()
-    return {"items": items, "total": total, "page": page, "page_size": page_size}
+    return paginate(q, page, page_size)
 
 
 @router.get("/doctors/{doctor_id}", response_model=DoctorOut)
 def get_doctor(doctor_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    doctor = db.query(Doctor).filter(Doctor.id == doctor_id).first()
-    if not doctor:
-        raise HTTPException(status_code=404, detail="Doctor not found")
-    return doctor
+    return get_or_404(db, Doctor, doctor_id, "Doctor not found")
 
 
 @router.post("/doctor", response_model=DoctorOut)
@@ -56,11 +52,8 @@ def create_doctor(payload: DoctorCreate, db: Session = Depends(get_db), user: Us
 def update_doctor(
     doctor_id: str, payload: DoctorUpdate, db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ):
-    doctor = db.query(Doctor).filter(Doctor.id == doctor_id).first()
-    if not doctor:
-        raise HTTPException(status_code=404, detail="Doctor not found")
-    for field, value in payload.model_dump(exclude_unset=True).items():
-        setattr(doctor, field, value)
+    doctor = get_or_404(db, Doctor, doctor_id, "Doctor not found")
+    apply_updates(doctor, payload)
     db.commit()
     db.refresh(doctor)
     return doctor
@@ -68,9 +61,7 @@ def update_doctor(
 
 @router.delete("/doctor/{doctor_id}")
 def delete_doctor(doctor_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    doctor = db.query(Doctor).filter(Doctor.id == doctor_id).first()
-    if not doctor:
-        raise HTTPException(status_code=404, detail="Doctor not found")
+    doctor = get_or_404(db, Doctor, doctor_id, "Doctor not found")
     db.delete(doctor)
     db.commit()
     return {"detail": "Doctor deleted"}

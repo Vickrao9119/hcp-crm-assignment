@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Typography, TextField, Button, Grid, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { Box, TextField, Button, Grid, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import { MdAdd, MdViewModule, MdViewList } from 'react-icons/md';
 import { fetchDoctors } from '../store/slices/doctorSlice';
 import { doctorApi } from '../api/endpoints';
@@ -10,6 +10,7 @@ import DoctorTable from '../components/DoctorTable';
 import Modal from '../components/Modal';
 import Loading from '../components/Loading';
 import EmptyState from '../components/EmptyState';
+import PageHeader from '../components/PageHeader';
 
 export default function Doctors() {
   const dispatch = useDispatch();
@@ -40,17 +41,19 @@ export default function Doctors() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
-        <Typography variant="h5" sx={{ fontFamily: '"Fraunces", serif' }}>Doctors</Typography>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <TextField size="small" placeholder="Search doctors..." value={search} onChange={(e) => setSearch(e.target.value)} />
-          <ToggleButtonGroup size="small" value={view} exclusive onChange={(_, v) => v && setView(v)}>
-            <ToggleButton value="grid"><MdViewModule /></ToggleButton>
-            <ToggleButton value="table"><MdViewList /></ToggleButton>
-          </ToggleButtonGroup>
-          <Button variant="contained" startIcon={<MdAdd />} onClick={() => setModalOpen(true)}>Add Doctor</Button>
-        </Box>
-      </Box>
+      <PageHeader
+        title="Doctors"
+        actions={
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <TextField size="small" placeholder="Search doctors..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            <ToggleButtonGroup size="small" value={view} exclusive onChange={(_, v) => v && setView(v)}>
+              <ToggleButton value="grid"><MdViewModule /></ToggleButton>
+              <ToggleButton value="table"><MdViewList /></ToggleButton>
+            </ToggleButtonGroup>
+            <Button variant="contained" startIcon={<MdAdd />} onClick={() => setModalOpen(true)}>Add Doctor</Button>
+          </Box>
+        }
+      />
 
       {status === 'loading' && !items.length ? <Loading /> : null}
       {status === 'succeeded' && !items.length ? <EmptyState title="No doctors found" subtitle="Add your first doctor to get started." actionLabel="Add Doctor" onAction={() => setModalOpen(true)} /> : null}

@@ -6,6 +6,7 @@ import { fetchDashboard } from '../store/slices/dashboardSlice';
 import DashboardCards from '../components/DashboardCards';
 import Loading from '../components/Loading';
 import EmptyState from '../components/EmptyState';
+import PageHeader from '../components/PageHeader';
 
 export default function Dashboard() {
   const dispatch = useDispatch();
@@ -17,7 +18,7 @@ export default function Dashboard() {
 
   return (
     <Box>
-      <Typography variant="h5" sx={{ mb: 2, fontFamily: '"Fraunces", serif' }}>Dashboard</Typography>
+      <PageHeader title="Dashboard" />
       <DashboardCards stats={stats} />
 
       <Grid container spacing={2} sx={{ mt: 1 }}>

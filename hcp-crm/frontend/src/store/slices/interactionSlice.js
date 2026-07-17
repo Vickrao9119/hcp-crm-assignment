@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { interactionApi } from '../../api/endpoints';
+import { addAsyncCases } from '../thunkHelpers';
 
 export const fetchInteractions = createAsyncThunk('interactions/fetch', async (params) => {
   const { data } = await interactionApi.list(params);
@@ -16,18 +17,15 @@ const interactionSlice = createSlice({
   initialState: { items: [], total: 0, status: 'idle', error: null },
   reducers: {},
   extraReducers: (builder) => {
-    builder
-      .addCase(fetchInteractions.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(fetchInteractions.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+    addAsyncCases(builder, fetchInteractions, {
+      fulfilled: (state, action) => {
         state.items = action.payload.items;
         state.total = action.payload.total;
-      })
-      .addCase(createInteraction.fulfilled, (state, action) => {
-        state.items.unshift(action.payload);
-      });
+      },
+    });
+    builder.addCase(createInteraction.fulfilled, (state, action) => {
+      state.items.unshift(action.payload);
+    });
   },
 });
 

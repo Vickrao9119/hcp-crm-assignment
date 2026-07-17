@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Typography, MenuItem, TextField } from '@mui/material';
+import { Box, MenuItem, TextField } from '@mui/material';
 import { fetchInteractions } from '../store/slices/interactionSlice';
 import HistoryTable from '../components/HistoryTable';
+import PageHeader from '../components/PageHeader';
 
 export default function InteractionHistory() {
   const dispatch = useDispatch();
@@ -16,15 +17,17 @@ export default function InteractionHistory() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
-        <Typography variant="h5" sx={{ fontFamily: '"Fraunces", serif' }}>Interaction History</Typography>
-        <TextField select size="small" label="Priority" value={priority} onChange={(e) => setPriority(e.target.value)} sx={{ minWidth: 160 }}>
-          <MenuItem value="">All</MenuItem>
-          <MenuItem value="high">High</MenuItem>
-          <MenuItem value="medium">Medium</MenuItem>
-          <MenuItem value="low">Low</MenuItem>
-        </TextField>
-      </Box>
+      <PageHeader
+        title="Interaction History"
+        actions={
+          <TextField select size="small" label="Priority" value={priority} onChange={(e) => setPriority(e.target.value)} sx={{ minWidth: 160 }}>
+            <MenuItem value="">All</MenuItem>
+            <MenuItem value="high">High</MenuItem>
+            <MenuItem value="medium">Medium</MenuItem>
+            <MenuItem value="low">Low</MenuItem>
+          </TextField>
+        }
+      />
       <HistoryTable rows={items} loading={status === 'loading'} rowCount={total} page={page} pageSize={10} onPageChange={setPage} />
     </Box>
   );
