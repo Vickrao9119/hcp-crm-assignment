@@ -20,11 +20,21 @@ If GROQ_API_KEY is not configured, nodes fall back to the local
 rule-based extractor in extractor.py so the whole app still runs without
 external API access.
 """
+import logging
 from typing import TypedDict, List, Dict, Any, Optional
 from langgraph.graph import StateGraph, END
 
 from app.core.config import settings
 from app.agent import extractor
+
+logger = logging.getLogger(__name__)
+
+_FALLBACK_REPLY = (
+    "I can help you log a visit, search for a doctor, summarize notes, "
+    "or schedule a follow-up. Try: 'Today I visited Dr Sharma at Apollo "
+    "Hospital, discussed diabetes medicines, doctor requested samples, "
+    "follow up next Monday.'"
+)
 
 
 class AgentState(TypedDict, total=False):
@@ -45,6 +55,12 @@ def _get_llm():
 
         return ChatGroq(api_key=settings.GROQ_API_KEY, model=settings.GROQ_MODEL, temperature=0.2)
     except Exception:
+        # Don't crash the app if the optional Groq integration is misconfigured
+        # or the package is missing — fall back to the rule-based path, but make
+        # the failure visible instead of swallowing it silently.
+        logger.warning(
+            "Groq LLM unavailable; falling back to rule-based agent.", exc_info=True
+        )
         return None
 
 
@@ -112,15 +128,18 @@ def general_chat(state: AgentState) -> AgentState:
     """Fallback conversational node when no specific intent/tool matches."""
     llm = _get_llm()
     if llm:
-        response = llm.invoke(state["message"])
-        state["reply"] = response.content
+        try:
+            response = llm.invoke(state["message"])
+            state["reply"] = response.content
+        except Exception:
+            # A transient LLM/network/API error should degrade gracefully to the
+            # canned guidance rather than 500 the whole /chat request.
+            logger.warning(
+                "LLM invocation failed; using fallback reply.", exc_info=True
+            )
+            state["reply"] = _FALLBACK_REPLY
     else:
-        state["reply"] = (
-            "I can help you log a visit, search for a doctor, summarize notes, "
-            "or schedule a follow-up. Try: 'Today I visited Dr Sharma at Apollo "
-            "Hospital, discussed diabetes medicines, doctor requested samples, "
-            "follow up next Monday.'"
-        )
+        state["reply"] = _FALLBACK_REPLY
     state["tool_result"] = {"action": "general_chat"}
     return state
 

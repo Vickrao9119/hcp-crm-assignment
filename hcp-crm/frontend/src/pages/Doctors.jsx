@@ -33,8 +33,9 @@ export default function Doctors() {
       setModalOpen(false);
       setForm({ name: '', specialization: '', city: '', phone: '', email: '' });
       dispatch(fetchDoctors({ search, page, page_size: 12 }));
-    } catch {
-      enqueueSnackbar('Failed to add doctor', { variant: 'error' });
+    } catch (err) {
+      const detail = err?.response?.data?.detail || err?.message || 'Failed to add doctor';
+      enqueueSnackbar(detail, { variant: 'error' });
     }
   };
 

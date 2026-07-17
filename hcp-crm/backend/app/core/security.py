@@ -1,11 +1,14 @@
 """
 Password hashing and JWT token utilities.
 """
+import logging
 from datetime import datetime, timedelta
 from typing import Optional
-from jose import jwt
+from jose import jwt, JWTError
 import bcrypt
 from app.core.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 def hash_password(password: str) -> str:
@@ -28,5 +31,9 @@ def create_access_token(subject: str, expires_delta: Optional[timedelta] = None)
 def decode_access_token(token: str) -> Optional[dict]:
     try:
         return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-    except Exception:
+    except JWTError as exc:
+        # Expected for invalid/expired/tampered tokens — caller treats None as
+        # "unauthenticated". Log at debug so genuine auth failures are traceable
+        # without narrowing broad exceptions that would mask real bugs.
+        logger.debug("JWT validation failed: %s", exc)
         return None
