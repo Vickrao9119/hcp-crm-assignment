@@ -27,11 +27,18 @@ def register(payload: UserCreate, db: Session = Depends(get_db)):
     return user
 
 
+def _authenticate(db: Session, email: str, password: str) -> User:
+    user = db.query(User).filter(User.email == email).first()
+    if not user or not verify_password(password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
+    if not user.is_active:
+        raise HTTPException(status_code=403, detail="Account is disabled")
+    return user
+
+
 @router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == form_data.username).first()
-    if not user or not verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Incorrect email or password")
+    user = _authenticate(db, form_data.username, form_data.password)
     token = create_access_token(subject=user.email)
     return Token(access_token=token, user=user)
 
@@ -39,8 +46,6 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 @router.post("/login-json", response_model=Token)
 def login_json(payload: UserLogin, db: Session = Depends(get_db)):
     """JSON login used by the React frontend (axios) instead of form-encoded."""
-    user = db.query(User).filter(User.email == payload.email).first()
-    if not user or not verify_password(payload.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Incorrect email or password")
+    user = _authenticate(db, payload.email, payload.password)
     token = create_access_token(subject=user.email)
     return Token(access_token=token, user=user)
