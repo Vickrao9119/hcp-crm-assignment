@@ -1,9 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { chatApi } from '../../api/endpoints';
 
-export const sendChatMessage = createAsyncThunk('chat/send', async (payload) => {
-  const { data } = await chatApi.send(payload);
-  return data;
+export const sendChatMessage = createAsyncThunk('chat/send', async (payload, { rejectWithValue }) => {
+  try {
+    const { data } = await chatApi.send(payload);
+    return data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.detail || 'Something went wrong. Please try again.');
+  }
 });
 
 const chatSlice = createSlice({
@@ -29,9 +33,12 @@ const chatSlice = createSlice({
           savedInteraction: action.payload.interaction_saved,
         });
       })
-      .addCase(sendChatMessage.rejected, (state) => {
+      .addCase(sendChatMessage.rejected, (state, action) => {
         state.status = 'failed';
-        state.messages.push({ role: 'assistant', text: 'Something went wrong. Please try again.' });
+        state.messages.push({
+          role: 'assistant',
+          text: action.payload || 'Something went wrong. Please try again.',
+        });
       });
   },
 });

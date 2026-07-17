@@ -8,12 +8,13 @@ export const fetchDashboard = createAsyncThunk('dashboard/fetch', async () => {
 
 const dashboardSlice = createSlice({
   name: 'dashboard',
-  initialState: { stats: null, recentActivity: [], upcomingFollowups: [], monthlyChart: [], status: 'idle' },
+  initialState: { stats: null, recentActivity: [], upcomingFollowups: [], monthlyChart: [], status: 'idle', error: null },
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchDashboard.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(fetchDashboard.fulfilled, (state, action) => {
         state.status = 'succeeded';
@@ -21,6 +22,10 @@ const dashboardSlice = createSlice({
         state.recentActivity = action.payload.recent_activity;
         state.upcomingFollowups = action.payload.upcoming_followups;
         state.monthlyChart = action.payload.monthly_chart;
+      })
+      .addCase(fetchDashboard.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error?.message || 'Failed to load dashboard';
       });
   },
 });

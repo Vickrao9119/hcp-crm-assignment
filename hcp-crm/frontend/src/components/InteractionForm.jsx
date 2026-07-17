@@ -34,7 +34,8 @@ export default function InteractionForm({ doctors = [], onSaved }) {
       reset();
       onSaved?.();
     } catch (e) {
-      enqueueSnackbar('Failed to save interaction', { variant: 'error' });
+      const detail = typeof e === 'string' ? e : e?.message || 'Failed to save interaction';
+      enqueueSnackbar(detail, { variant: 'error' });
     }
   };
 
